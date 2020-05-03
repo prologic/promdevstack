@@ -1,11 +1,20 @@
-# Prometheus Local (Docker)
+## Local Prometheus Dev Stack (prometheus, grafana, alertmanager) via Docker
 
-## Quickstart
+
+Brings up a Prometheus, Grafana, and Alertmanager development stack quickly using Docker.
+
+  - Stack config files are stored in `./configs` directory. Run `make reload` after editing.
+  - The `./docker` directory contains files and scripts for building the docker images. You do not need to edit these.
+  - Run `make help` to get started.
+
+
+## Quickstart 
+
 
 ```bash
-git clone foo && cd foo
+cp configs/prometheus.yml.example configs/prometheus.yml
 make build
-make up
+make up #down, clean, ps, etc
 ```
 
 See `make help` for more options.
@@ -14,7 +23,7 @@ See `make help` for more options.
 ## Exporters and Common Ports
 See https://github.com/prometheus/prometheus/wiki/Default-port-allocations for an updated list.
 
-## Core components starting at 9090
+### Core components starting at 9090
 
 | Port | Protocol | Component |
 | ---- | -------- | --------- |
@@ -24,7 +33,7 @@ See https://github.com/prometheus/prometheus/wiki/Default-port-allocations for a
 | 9093 | http | Alertmanager |
 | 9094 | ? | Alertmanager clustering |
 
-## Exporters starting at 9100
+### Exporters starting at 9100
 
 | Port | Exporter |
 | ---- | -------- |
