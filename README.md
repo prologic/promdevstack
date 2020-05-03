@@ -5,6 +5,7 @@ Brings up a Prometheus, Grafana, and Alertmanager development stack quickly usin
 
   - Stack config files are stored in `./configs` directory. Run `make reload` after editing.
   - The `./docker` directory contains files and scripts for building the docker images. You do not need to edit these.
+  - The `./scripts` directory contains scripts used by `make foo` commands. They are not inteded to be run directly.
   - Run `make help` to get started.
 
 
