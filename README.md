@@ -11,6 +11,7 @@ Brings up a Prometheus, Grafana, and Alertmanager development stack quickly usin
 
 ## Quickstart 
 
+`fork` and `clone` this repo if you want to commit your configs.
 
 ```bash
 cp configs/prometheus/prometheus.yml.example configs/prometheus/prometheus.yml
