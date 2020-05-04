@@ -1,8 +1,8 @@
 # builder
 FROM promstack-base-image
-ARG promversion=2.17.2
-ARG promarch=linux-amd64
-ENV promdl="https://github.com/prometheus/prometheus/releases/download/v${promversion}/prometheus-${promversion}.${promarch}.tar.gz"
+ARG version=2.17.2
+ARG arch=linux-amd64
+ENV dl="https://github.com/prometheus/prometheus/releases/download/v${version}/prometheus-${version}.${arch}.tar.gz"
 
 RUN groupadd prometheus && \
     useradd -s /sbin/nologin --system -g prometheus prometheus
@@ -16,8 +16,8 @@ RUN mkdir -p /etc/prometheus/rules && \
     chown prometheus:prometheus /svc/prometheus
 
 WORKDIR /svc/prometheus
-ADD $promdl  .
-RUN tar -xzf prometheus-$promversion.$promarch.tar.gz && \
+ADD $dl  .
+RUN tar -xzf "prometheus-${version}.${arch}.tar.gz" && \
     mv prometheus*/prometheus /usr/local/bin/ && \
     mv prometheus*/promtool /usr/local/bin/ && \
     mv prometheus*/prometheus.yml /etc/prometheus/ && \
@@ -32,7 +32,6 @@ RUN chown prometheus:prometheus /usr/local/bin/prometheus-entrypoint.sh && \
     chmod +x /usr/local/bin/prometheus-entrypoint.sh && \
     ln -s /usr/local/bin/prometheus-entrypoint.sh /
 
-USER prometheus
 EXPOSE 9090
 ENTRYPOINT [ "prometheus-entrypoint.sh" ]
 CMD ["prometheus"]

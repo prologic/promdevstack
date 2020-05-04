@@ -3,4 +3,5 @@ FROM debian:buster as base
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get upgrade -y && \
+    apt-get install -y gosu && \
     rm -rf /var/lib/apt/lists/*

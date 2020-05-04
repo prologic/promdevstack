@@ -2,15 +2,6 @@
 # brings up the monitoring stock
 stack=( prometheusdev grafanadev alertmanagerdev )
 
-# display links and exit
-function exit_0 () {
-  echo
-  echo "Links:"
-  echo "  prometheus   => http://localhost:9090"
-  echo "  grafana      => http://localhost:?"
-  echo "  alertmanager => http://localhost:?"  
-  exit 0
-}
 
 function tryresume () {
   # check if it's running already
@@ -29,7 +20,7 @@ function trystart () {
   case "$1" in
     prometheusdev)
       printf "  - starting prometheus... "
-      prom_cmd="docker run -d --name prometheusdev -p 9090:9090 -v $(pwd)/configs/prometheus.yml:/etc/prometheus/prometheus.yml prometheusdev"
+      prom_cmd="docker run -d --name prometheusdev --network promstack -p 9090:9090 -v $(pwd)/configs/prometheus:/etc/prometheus prometheusdev"
       $prom_cmd >/dev/null 2>&1 && echo "OK" && return 0
       # failed.. run the command again so they can see the issue
       echo FAIL
@@ -37,10 +28,22 @@ function trystart () {
       return 1
     ;;
     grafanadev)
-      printf "  - starting grafana... " && echo OK
+      printf "  - starting grafana... "
+      graf_cmd="docker run -d --name grafanadev --network promstack -p 3000:3000 --env-file $(pwd)/docker/grafana/grafana.env -v $(pwd)/configs/grafana:/etc/grafana grafanadev"
+      $graf_cmd >/dev/null 2>&1 && echo "OK" && return 0
+      # failed.. run the command again so they can see the issue
+      echo FAIL
+      echo "    try removing any existing failed grafanadev containers (ie.. \`docker ps -a\` && \`docker rm <containername>\`)"
+      return 1
     ;;
     alertmanagerdev)
       printf "  - starting alertmanager... " && echo OK
+      am_cmd="docker run -d --name alertmanagerdev --network promstack -p 9093:9093 -v $(pwd)/configs/alertmanager:/etc/alertmanager alertmanagerdev"
+      $am_cmd >/dev/null 2>&1 && echo "OK" && return 0
+      # failed.. run the command again so they can see the issue
+      echo FAIL
+      echo "    try removing any existing failed alertmanagerdev containers (ie.. \`docker ps -a\` && \`docker rm <containername>\`)"
+      return 1
     ;;
   esac
 }
@@ -49,10 +52,25 @@ function trystart () {
 docker info >/dev/null 2>&1
 [ $? -ne 0 ] && echo "Error launching stack.. is Docker running?" && exit 1
 
+# network exist?
+docker network create promstack >/dev/null 2>&1
+[ $? -ne 0 ] && docker network create promstack >/dev/null 2>&1
+
 echo "Bringing up the stack:"
 for i in "${stack[@]}"; do
   # first try to start/resume stopped containers
   tryresume $i || trystart $i
 done
 
-exit_0
+# test to ensure each container is running
+for i in "${stack[@]}"; do
+  running=$(docker inspect -f '{{.State.Running}}' "$i" 2>&1)
+  [ "$running" != "true" ] && echo "Failed to start $i" && exit 1
+done
+
+# else all is well, display links
+echo
+echo "Links:"
+echo "  grafana      => http://localhost:3000 user 'admin' password 'grafana'"
+echo "  prometheus   => http://localhost:9090"
+echo "  alertmanager => http://localhost:9093"  
