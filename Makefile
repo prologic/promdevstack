@@ -34,6 +34,11 @@ reload: ## Run this after making configuration changes (sends SIGHUP instead of 
 status: ps ## Display status of the docker containers.
 ps: ## alias for status
 	@docker ps --filter "name=prometheusdev" --filter "name=grafanadev" --filter "name=alertmanagerdev"
+	@echo
+	@echo "Links:"
+	@echo "  grafana      => http://localhost:3000 user 'admin' password 'grafana'"
+	@echo "  prometheus   => http://localhost:9090"
+	@echo "  alertmanager => http://localhost:9093"  
 
 local-exporter: ## Installs a local node-exporter if on Mac, Linux, or inside a Windows WSL session
 	@echo TODO
