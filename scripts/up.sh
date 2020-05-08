@@ -67,6 +67,8 @@ for i in "${stack[@]}"; do
   running=$(docker inspect -f '{{.State.Running}}' "$i" 2>&1)
   [ "$running" != "true" ] && echo "Failed to start $i" && exit 1
 done
+# pause for a second or two to allow grafana to come up (else they will get a 404)
+sleep 2
 
 # else all is well, display links
 echo

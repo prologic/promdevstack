@@ -18,6 +18,9 @@ grafana: ## (Re)build the grafanadev image
 alertmanager: ## (Re)build the alertmanagerdev image
 	docker build -t alertmanagerdev -f docker/alertmanager/Dockerfile ./docker/alertmanager
 
+cadvisor: ## Deploy cAdvisor
+	@./scripts/cadvisor.sh
+
 up: start ## Bring the stack up.
 start:
 	@./scripts/up.sh
