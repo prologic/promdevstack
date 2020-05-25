@@ -18,9 +18,6 @@ grafana: ## (Re)build the grafanadev image
 alertmanager: ## (Re)build the alertmanagerdev image
 	docker build -t alertmanagerdev -f docker/alertmanager/Dockerfile ./docker/alertmanager
 
-cadvisor: ## Deploy cAdvisor
-	@./scripts/cadvisor.sh
-
 up: start ## Bring the stack up.
 start:
 	@./scripts/up.sh
@@ -36,12 +33,13 @@ reload: ## Run this after making configuration changes (sends SIGHUP instead of 
 
 status: ps ## Display status of the docker containers.
 ps: ## alias for status
-	@docker ps --filter "name=prometheusdev" --filter "name=grafanadev" --filter "name=alertmanagerdev"
+	@docker ps --filter "name=cadvisor" --filter "name=prometheusdev" --filter "name=grafanadev" --filter "name=alertmanagerdev"
 	@echo
 	@echo "Links:"
-	@echo "  grafana      => http://localhost:3000 user 'admin' password 'grafana'"
-	@echo "  prometheus   => http://localhost:9090"
-	@echo "  alertmanager => http://localhost:9093"  
+	@echo "  grafana       => http://localhost:3000 user 'admin' password 'grafana'"
+	@echo "  prometheus    => http://localhost:9090"
+	@echo "  alertmanager  => http://localhost:9093"
+	@echo "  cadvisor      => http://localhost:9080"
 
 local-exporter: ## Installs a local node-exporter if on Mac, Linux, or inside a Windows WSL session
 	@echo TODO

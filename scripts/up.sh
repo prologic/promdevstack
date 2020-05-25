@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # brings up the monitoring stock
-stack=( prometheusdev grafanadev alertmanagerdev )
+stack=( cadvisor prometheusdev grafanadev alertmanagerdev )
 
 
 function tryresume () {
@@ -18,6 +18,20 @@ function tryresume () {
 
 function trystart () {
   case "$1" in
+    cadvisor)
+      printf "  - starting cadvisor... "
+      CADVISOR_VERSION="${CADVISOR_VERSION:-v0.35.0}"
+      docker run \
+        --volume=/:/rootfs:ro \
+        --volume=/var/run:/var/run:ro \
+        --volume=/sys:/sys:ro \
+        --volume=/var/lib/docker/:/var/lib/docker:ro \
+        --volume=/dev/disk/:/dev/disk:ro \
+        --publish=9080:8080 \
+        --detach=true \
+        --name=cadvisor \
+        gcr.io/google-containers/cadvisor:$CADVISOR_VERSION >/dev/null 2>&1 && echo "OK" && return 0
+    ;;
     prometheusdev)
       printf "  - starting prometheus... "
       prom_cmd="docker run -d --name prometheusdev --network promstack -p 9090:9090 -v $(pwd)/configs/prometheus:/etc/prometheus prometheusdev"
@@ -28,8 +42,17 @@ function trystart () {
       return 1
     ;;
     grafanadev)
+      plugins=()
+      dashboards=()
       printf "  - starting grafana... "
-      graf_cmd="docker run -d --name grafanadev --network promstack -p 3000:3000 --env-file $(pwd)/docker/grafana/grafana.env -v $(pwd)/configs/grafana:/etc/grafana grafanadev"
+      for plugin in $(ls $(pwd)/configs/grafana/plugins); do
+        plugins+=("-v $(pwd)/configs/grafana/plugins/$plugin:/var/lib/grafana/plugins/$plugin ")
+      done
+      
+      graf_cmd="docker run -d --name grafanadev --network promstack -p 3000:3000 --env-file $(pwd)/docker/grafana/grafana.env \
+                -v $(pwd)/configs/grafana:/etc/grafana \
+                $plugins \
+                grafanadev"
       $graf_cmd >/dev/null 2>&1 && echo "OK" && return 0
       # failed.. run the command again so they can see the issue
       echo FAIL
@@ -75,4 +98,5 @@ echo
 echo "Links:"
 echo "  grafana      => http://localhost:3000 user 'admin' password 'grafana'"
 echo "  prometheus   => http://localhost:9090"
-echo "  alertmanager => http://localhost:9093"  
+echo "  alertmanager => http://localhost:9093"
+echo "  cadvisor 	   => http://localhost:9080" 

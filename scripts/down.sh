@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # bring the stack down
-stack=( prometheusdev grafanadev alertmanagerdev)
+stack=( cadvisor prometheusdev grafanadev alertmanagerdev)
 
 for i in "${stack[@]}"; do
   printf "Stopping $i... "

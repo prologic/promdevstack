@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # removes stack containers
-stack=( prometheusdev grafanadev alertmanagerdev)
+stack=( cadvisor prometheusdev grafanadev alertmanagerdev)
 
 for i in "${stack[@]}"; do
   printf "Removing container $i... "

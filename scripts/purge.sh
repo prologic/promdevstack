@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # removes stack images
-stack=( promstack-base-image prometheusdev grafanadev alertmanagerdev)
+stack=( cadvisor promstack-base-image prometheusdev grafanadev alertmanagerdev)
 
 for i in "${stack[@]}"; do
   printf "Removing container $i... "
