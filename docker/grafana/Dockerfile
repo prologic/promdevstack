@@ -1,6 +1,6 @@
 FROM promstack-base-image
 ENV DEBIAN_FRONTEND=noninteractive
-ARG version=6.7.3
+ARG version=7.0.0-beta3
 ARG arch=amd64
 ENV dl="https://dl.grafana.com/oss/release/grafana_${version}_${arch}.deb"
 ENV deb="grafana_${version}_${arch}.deb"

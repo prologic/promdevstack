@@ -5,7 +5,7 @@ set -ex
 [ "$1" == "grafana-cli" ] && shift && gosu grafana grafana-cli "$@"
 
 # grafana (default)
-if [ "$1" = 'grafana' ]; then
+if [ "$1" == 'grafana' ]; then
     chown -R grafana:grafana /etc/grafana
     chown -R grafana:grafana /var/lib/grafana
     chown -R grafana:grafana /usr/share/grafana
