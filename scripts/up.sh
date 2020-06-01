@@ -43,7 +43,6 @@ function trystart () {
     ;;
     grafanadev)
       plugins=()
-      dashboards=()
       printf "  - starting grafana... "
       for plugin in $(ls $(pwd)/configs/grafana/plugins); do
         plugins+=("-v $(pwd)/configs/grafana/plugins/$plugin:/var/lib/grafana/plugins/$plugin ")
